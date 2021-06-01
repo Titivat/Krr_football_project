@@ -119,6 +119,9 @@ class Score():
         self.score1 = 0
         self.score2 = 0
         self.score_font = pygame.font.SysFont(None, 100)
+        self.win_font = pygame.font.SysFont(None, 100)
+        self.player1_win = self.win_font.render('Player 1 win', True, COLOR_WHITE, COLOR_BLACK)
+        self.player2_win = self.win_font.render('Player 2 win', True, COLOR_WHITE, COLOR_BLACK)
 
     def update( self ):
         #if a player scores
@@ -134,6 +137,14 @@ class Score():
     def draw(self):
         game_window.blit( self.player1_score, (WINDOW_WIDTH / 4, WINDOW_HEIGHT / 8))
         game_window.blit( self.player2_score, (WINDOW_WIDTH * 3 / 4, WINDOW_HEIGHT / 8))
+        if self.score1 == 5:
+            game_window.blit( self.player1_win, ( 55, WINDOW_HEIGHT / 4))
+            ball.dx = 0
+            ball.dy = 0
+        if self.score2 == 5:
+            game_window.blit( self.player2_win, ( 55, WINDOW_HEIGHT / 4))
+            ball.dx = 0
+            ball.dy = 0
 
 # --Sprite Groups
 all_sprites = pygame.sprite.Group()
