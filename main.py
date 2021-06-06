@@ -12,6 +12,11 @@ clock = pygame.time.Clock()
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
+COLOR_RED = (255, 0, 0)
+COLOR_BLUE = (0, 0, 255)
+
+BACKGROUND = pygame.image.load("football_field")
+BACKGROUND = pygame.transform.scale(BACKGROUND, (WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # Game window
 game_window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -19,15 +24,15 @@ pygame.display.set_caption('First Game')
 
 #--Sprite -- ##
 
+
 class Player1(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10, 80))
-        self.image.fill(COLOR_WHITE)
+        self.image = pygame.Surface((25, 60))
+        self.image.fill(COLOR_RED)
         self.rect = self.image.get_rect()
         self.rect.left = 25
         self.rect.centery = WINDOW_HEIGHT / 2
-        #self.top = self.rect.centery
         self.dy = 0
 
     def setPosition(self, left, center):
@@ -52,16 +57,17 @@ class Player1(pygame.sprite.Sprite):
         if self.rect.bottom > WINDOW_HEIGHT:
             self.rect.bottom = WINDOW_HEIGHT
 
+
 class Player2(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((10, 80))
-        self.image.fill(COLOR_WHITE)
+        self.image = pygame.Surface((25, 60))
+        self.image.fill(COLOR_BLUE)
         self.rect = self.image.get_rect()
         self.rect.right = WINDOW_WIDTH - 25
         self.rect.centery = WINDOW_HEIGHT / 2
 
-    def setPosition( self, right , center ):
+    def setPosition(self, right, center):
         self.rect.right = right
         self.rect.centery = center
 
@@ -82,6 +88,7 @@ class Player2(pygame.sprite.Sprite):
             self.rect.top = 0
         if self.rect.bottom > WINDOW_HEIGHT:
             self.rect.bottom = WINDOW_HEIGHT
+
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
@@ -121,6 +128,7 @@ class Ball(pygame.sprite.Sprite):
             if self.dy >= 0:
                 self.dy += random.choice([-1, 0, 1])
 
+
 class Score():
     def __init__(self):
         self.score1 = 0
@@ -146,8 +154,8 @@ class Score():
             str(self.score2), True, COLOR_WHITE, COLOR_BLACK)
 
     def draw(self):
-        game_window.blit(self.player1_score,(WINDOW_WIDTH / 4, 10))
-        game_window.blit(self.player2_score,(WINDOW_WIDTH * 3 / 4, 10))
+        game_window.blit(self.player1_score, (WINDOW_WIDTH / 4, 10))
+        game_window.blit(self.player2_score, (WINDOW_WIDTH * 3 / 4, 10))
 
         if self.score1 == 5:
             game_window.blit(self.player1_win, (55, WINDOW_HEIGHT / 4))
@@ -158,6 +166,7 @@ class Score():
             ball.dx = 0
             ball.dy = 0
 
+
 # --Sprite Groups
 all_sprites = pygame.sprite.Group()
 ball_sprite = pygame.sprite.GroupSingle()
@@ -166,7 +175,7 @@ ball_sprite = pygame.sprite.GroupSingle()
 player1 = Player1()
 all_sprites.add(player1)
 
-#player1
+# player1
 position = 100
 for _ in range(3):
     midPlayer1 = Player1()
@@ -181,7 +190,7 @@ for _ in range(3):
     all_sprites.add(midPlayer1)
     position += 300
 
-#player2
+# player2
 position = 100
 for _ in range(3):
     midPlayer2 = Player2()
@@ -226,13 +235,9 @@ while True:
     score.update()
 
     # clean the movment of the sprite
-    game_window.fill(COLOR_BLACK)
+    # game_window.fill(COLOR_BLACK)
+    game_window.blit(BACKGROUND, (0, 0))
     # Draw
-    # Field
-    pygame.draw.line(game_window, COLOR_WHITE,
-                     (WINDOW_WIDTH / 2, 0), (WINDOW_WIDTH/2, WINDOW_HEIGHT))
-    pygame.draw.circle(game_window, COLOR_WHITE,
-                       (WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2), 80, 1)
     # score
     score.draw()
     # Draw the  sprite on the screnn
