@@ -30,7 +30,7 @@ class Goal1(pygame.sprite.Sprite):
         self.image = pygame.Surface((10, 210))
         self.image.fill(COLOR_BLACK)
         self.rect = self.image.get_rect()
-        self.rect.left = 23
+        self.rect.left = 25
         self.rect.centery = WINDOW_HEIGHT / 2
 
 class OutLine1(pygame.sprite.Sprite):
@@ -39,7 +39,25 @@ class OutLine1(pygame.sprite.Sprite):
         self.image = pygame.Surface((10, WINDOW_HEIGHT))
         self.image.fill(COLOR_WHITE)
         self.rect = self.image.get_rect()
-        self.rect.left = 22
+        self.rect.left = 21
+        self.rect.centery = WINDOW_HEIGHT / 2
+
+class Goal2(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((10, 210))
+        self.image.fill(COLOR_BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.right = WINDOW_WIDTH - 27
+        self.rect.centery = WINDOW_HEIGHT / 2
+
+class OutLine2(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((10, WINDOW_HEIGHT))
+        self.image.fill(COLOR_WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.right = WINDOW_WIDTH - 23
         self.rect.centery = WINDOW_HEIGHT / 2
 
 #--Sprite -- ##
@@ -49,7 +67,7 @@ class Player1(pygame.sprite.Sprite):
         self.image = pygame.Surface((25, 60))
         self.image.fill(COLOR_RED)
         self.rect = self.image.get_rect()
-        self.rect.left = 35
+        self.rect.left = 37
         self.rect.centery = WINDOW_HEIGHT / 2
         self.dy = 0
 
@@ -81,7 +99,7 @@ class Player2(pygame.sprite.Sprite):
         self.image = pygame.Surface((25, 60))
         self.image.fill(COLOR_BLUE)
         self.rect = self.image.get_rect()
-        self.rect.right = WINDOW_WIDTH - 25
+        self.rect.right = WINDOW_WIDTH - 39
         self.rect.centery = WINDOW_HEIGHT / 2
 
     def setPosition(self, right, center):
@@ -157,13 +175,20 @@ class Ball(pygame.sprite.Sprite):
 
                 if self.dx == 0:
                     self.dx -= 1
-
+                    
             if(type(collion) == Goal1):
                 score.score1 += 1
                 ball.__init__()
 
+            if(type(collion) == Goal2):
+                score.score2 += 1
+                ball.__init__()
+
             if(type(collion) == OutLine1):
                 ball.ballBounceY('player1')
+
+            if(type(collion) == OutLine2):
+                ball.ballBounceY('player2')
 
             # extra condition to make it fun
             if self.dy == 0:
@@ -249,12 +274,15 @@ ball = Ball()
 ball_sprite.add(ball)
 
 #gal added
-outline = OutLine1()
-all_sprites.add(outline)
-
 goal1 = Goal1()
 all_sprites.add(goal1)
+goal2 = Goal2()
+all_sprites.add(goal2)
 
+outline1 = OutLine1()
+all_sprites.add(outline1)
+outline2 = OutLine2()
+all_sprites.add(outline2)
 
 # score
 score = Score()
