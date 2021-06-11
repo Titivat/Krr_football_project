@@ -1,8 +1,8 @@
-:- module(inference, [op(250,fx,not), op(650,xfy,and), op(651,xfy,or), op/3, not/1, and/2, or/2, prove/1]).
+:- module(inference, [op(250,fx,not), op(950,xfy,and), op(951,xfy,or), op/3, not/1, and/2, or/2, prove/1]).
 
 :- op(250,fx,not).
-:- op(650,xfy,and).
-:- op(651,xfy,or).
+:- op(950,xfy,and).
+:- op(951,xfy,or).
 
 not(A) :- prove(not A).
 and(A,B) :- prove(A and B).
