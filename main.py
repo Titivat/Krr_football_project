@@ -69,6 +69,7 @@ class Player1(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.left = 37
         self.rect.centery = WINDOW_HEIGHT / 2
+        self.dx = 0
         self.dy = 0
 
     def setPosition(self, left, center):
@@ -81,11 +82,20 @@ class Player1(pygame.sprite.Sprite):
         keystate = pygame.key.get_pressed()
         # go down
         if keystate[pygame.K_w]:
-            self.dy = -3
+            self.dy = -2
         # go up
         if keystate[pygame.K_s]:
-            self.dy = 3
+            self.dy = 2
+
         self.rect.y += self.dy
+
+        if keystate[pygame.K_a]:
+            self.dx = 2
+
+        if keystate[pygame.K_d]:
+            self.dx = -2
+
+        self.rect.x = self.dx
 
         # condition so that the sprite do not move out the screen
         if self.rect.top < 0:
@@ -131,8 +141,8 @@ class Ball(pygame.sprite.Sprite):
         self.image.fill(COLOR_WHITE)
         self.rect = self.image.get_rect()
         self.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
-        self.dx = random.choice([-1, 1])
-        self.dy = random.choice([-2, -1, 1, 2])
+        self.dx = 0
+        self.dy = 0
 
     def ballBounceY( self , player):
         if(player == "player1"):
@@ -152,10 +162,10 @@ class Ball(pygame.sprite.Sprite):
         self.rect.y += self.dy
         # colusion
         if self.rect.top < 0:
-            self.dy *= -1
+            self.dy = 1
 
         if self.rect.bottom > WINDOW_HEIGHT:
-            self.dy *= -1
+            self.dy = -1
 
         # collision with player
         collion = pygame.sprite.spritecollideany(ball, all_sprites)
@@ -247,27 +257,6 @@ all_sprites.add(player1)
 player2 = Player2()
 all_sprites.add(player2)
 
-position = 100
-midplayerPosition = 300
-attackerPosition = 600
-for _ in range(3):
-    midPlayer1 = Player1()
-    midPlayer1.setPosition(midplayerPosition, position)
-    all_sprites.add(midPlayer1)
-
-    midPlayer2 = Player2()
-    midPlayer2.setPosition(WINDOW_WIDTH - midplayerPosition, position)
-    all_sprites.add(midPlayer2)
-
-    attack1 = Player1()
-    attack1.setPosition(attackerPosition, position)
-    all_sprites.add(attack1)
-
-    attack2 = Player2()
-    attack2.setPosition(WINDOW_WIDTH - attackerPosition, position)
-    all_sprites.add(attack2)
-
-    position += 300
 
 # ball added
 ball = Ball()

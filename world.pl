@@ -58,6 +58,8 @@ distance(O1, O2, D) :-
         is_at(O2, X2, Y2),
         D is sqrt((X2-X1)^2 + (Y2-Y1)^2).
 
+has(playerA7,ball).
+
 is_member(_,[]) :- !, fail.
 is_member(X,[X|_]) :- !.
 is_member(X,[_|T]) :-
