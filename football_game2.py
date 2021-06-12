@@ -248,6 +248,8 @@ field_object['ball'] = ball
 ball_sprite.add(ball)
 
 count = 0
+prolog.retractall('is_at(_,_,_)')
+prolog.retractall('has(_,_,_)')
 while True:
     # set framerate
     clock.tick(FPS)
@@ -262,6 +264,9 @@ while True:
             pos = pygame.mouse.get_pos()
             print(pos)
 
+    prolog.retractall('is_at(_,_,_)')
+    prolog.retractall('has(_,_,_)')
+    
     for k, v in field_object.items():
         prolog.assertz(f'is_at({k},{v.rect.x},{v.rect.y})')
         if isinstance(v, Ball) and v.player:
@@ -269,6 +274,7 @@ while True:
 
     for q in prolog.query('mi(A)'):
         for action in q['A']:
+            #print(action)
             functor = str(action.name)
             if action.arity == 1:
                 argv = str(action.args[0])
