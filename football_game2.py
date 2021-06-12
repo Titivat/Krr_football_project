@@ -60,24 +60,24 @@ class Player1(pygame.sprite.Sprite):
                 self.dy = (self.target_obj.rect.y-self.rect.y) * 0.04
                 self.dx = (self.target_obj.rect.x-self.rect.x) * 0.04
 
-        collion = pygame.sprite.spritecollideany(self, ball_sprite)
-        if collion and not ball.shoot:
-            if(type(collion) == Ball):
-                self.haveBall = True
-                ball.shoot = False
-                ball.rect.x = self.rect.x + 20
-                ball.rect.y = self.rect.y + 55
+        # collion = pygame.sprite.spritecollideany(self, ball_sprite)
+        # if collion and not ball.shoot:
+        #     if(type(collion) == Ball):
+        #         self.haveBall = True
+        #         ball.shoot = False
+        #         ball.rect.x = self.rect.x + 20
+        #         ball.rect.y = self.rect.y + 55
 
-                if self.action_dic['shoot']:
-                    self.action_dic['shoot'] = False
-                    self.haveBall = False
-                    ball.shoot = True
-                    ball.rect.x -= ball.dx
-                    ball.dx *= -1
-                    dx = (self.goalPositionX-self.rect.x) * 0.01
-                    dy = (self.goalPositionY-self.rect.y) * 0.01
-                    ball.dy += dy
-                    ball.dx += dx
+        #         if self.action_dic['shoot']:
+        #             self.action_dic['shoot'] = False
+        #             self.haveBall = False
+        #             ball.shoot = True
+        #             ball.rect.x -= ball.dx
+        #             ball.dx *= -1
+        #             dx = (self.goalPositionX-self.rect.x) * 0.01
+        #             dy = (self.goalPositionY-self.rect.y) * 0.01
+        #             ball.dy += dy
+        #             ball.dx += dx
 
         self.rect.y += self.dy
         self.rect.x += self.dx
@@ -88,10 +88,10 @@ class Player1(pygame.sprite.Sprite):
 
     def shoot(self):
         self.action_dic['shoot'] = True
-    
+
     def passto(self, obj):
         pass
-    
+
     def forward(self):
         pass
 
@@ -133,6 +133,25 @@ class Ball(pygame.sprite.Sprite):
 
         if self.rect.bottom > WINDOW_HEIGHT:
             self.dy = -1
+
+        collion = pygame.sprite.spritecollideany(ball, all_sprites)
+        if collion:
+            if(type(collion) == Player1):
+                collion.haveBall = True
+                self.shoot = False
+                self.rect.x = collion.rect.x + 20
+                self.rect.y = collion.rect.y + 55
+
+                if collion.action_dic['shoot']:
+                    collion.action_dic['shoot'] = False
+                    collion.haveBall = False
+                    self.shoot = True
+                    self.rect.x -= self.dx
+                    self.dx *= -1
+                    dx = (collion.goalPositionX-collion.rect.x) * 0.01
+                    dy = (collion.goalPositionY-collion.rect.y) * 0.01
+                    self.dy += dy
+                    self.dx += dx
 
 
 # main
@@ -215,11 +234,11 @@ while True:
             pos = pygame.mouse.get_pos()
             print(pos)
 
-    for k,v in field_object.items():
+    for k, v in field_object.items():
         prolog.assertz(f'is_at({k},{v.rect.x},{v.rect.y})')
         if isinstance(v, Player1) and v.haveBall:
             prolog.assertz(f'has({k},ball)')
-    
+
     for q in prolog.query('mi(A)'):
         for action in q['A']:
             functor = str(action.name)
@@ -237,7 +256,7 @@ while True:
                 if functor == "follow":
                     field_object[argv1].follow(field_object[argv2])
                     #field_object[argv1].isFollow = True
-                #elif functor == "tackle":
+                # elif functor == "tackle":
                 #    field_object[argv1].tackle(field_object[argv2])
                 elif functor == "pass":
                     field_object[argv1].passto(field_object[argv2])
