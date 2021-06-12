@@ -2,7 +2,7 @@ from typing import Tuple
 import pygame
 import random
 import sys
-import math
+import math, random
 
 from pyswip import Prolog, Atom, Functor
 
@@ -30,7 +30,20 @@ BACKGROUND = pygame.transform.scale(BACKGROUND, (WINDOW_WIDTH, WINDOW_HEIGHT))
 game_window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('First Game')
 
+class Goal(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((10, 210))
+        self.image.fill(COLOR_BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.left = 25
+        self.rect.centery = WINDOW_HEIGHT / 2
+        self.name = ""
 
+    def setPosition(self, left, center):
+        self.rect.left = left
+        self.rect.centery = center
+    
 class Player1(pygame.sprite.Sprite):
     def __init__(self, name):
         pygame.sprite.Sprite.__init__(self)
@@ -48,6 +61,7 @@ class Player1(pygame.sprite.Sprite):
             'forward': False,
             'backward': False,
             "passto": False,
+            "tackle":False,
         }
         self.dx = 0
         self.dy = 0
@@ -69,16 +83,16 @@ class Player1(pygame.sprite.Sprite):
         if self.action_dic['forward']:
             self.action_dic['forward'] = False
             if self.name in "playerB":
-                self.dx = 10
+                self.dx = 5
             else:
-                self.dx = -10
+                self.dx = -5
         
         if self.action_dic['backward']:
             self.action_dic['backward'] = False
             if self.name in "playerB":
-                self.dx = -10
+                self.dx = -5
             else:
-                self.dx = 10
+                self.dx = 5
 
         self.rect.y += self.dy
         self.rect.x += self.dx
@@ -100,10 +114,12 @@ class Player1(pygame.sprite.Sprite):
     def backward(self):
         self.action_dic['backward'] = True
 
+    def tackle(self):
+        self.action_dic['tackle'] = True
+
     def setPosition(self, left, center):
         self.rect.left = left
         self.rect.centery = center
-
 
 class Player2(Player1):
     def __init__(self, name):
@@ -111,7 +127,6 @@ class Player2(Player1):
         self.image.fill(COLOR_BLUE)
         self.goalPositionX = 32
         self.goalPositionY = 396
-
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
@@ -146,33 +161,78 @@ class Ball(pygame.sprite.Sprite):
                 self.rect.x = collion.rect.x + 20
                 self.rect.y = collion.rect.y + 55
 
-            if collion.action_dic['shoot']:
-                collion.action_dic['shoot'] = False
-                collion.haveBall = False
-                self.player = None
-                self.shoot = True
-                self.rect.x -= self.dx
-                self.dx *= -1
-                dx = (collion.goalPositionX-collion.rect.x) * 0.1
-                dy = (collion.goalPositionY-collion.rect.y) * 0.1
-                self.dy += dy
-                self.dx += dx
+                if collion.action_dic['shoot']:
+                    collion.action_dic['shoot'] = False
+                    collion.haveBall = False
+                    self.player = None
+                    self.shoot = True
+                    self.rect.x -= self.dx
+                    self.dx *= -1
+                    dx = (collion.goalPositionX-collion.rect.x) * 0.1
+                    dy = (collion.goalPositionY-collion.rect.y) * 0.1
+                    self.dy += dy
+                    self.dx += dx
 
-            if collion.action_dic['passto']:
-                collion.action_dic['passto'] = False
-                collion.haveBall = False
-                self.player = None
-                self.shoot = True
-                self.rect.x -= self.dx
-                self.dx *= -1
-                dx = (collion.target_obj.rect.x-collion.rect.x) * 0.1
-                dy = (collion.target_obj.react.y-collion.rect.y) * 0.1
-                self.dy += dy
-                self.dx += dx
+                if collion.action_dic['passto']:
+                    collion.action_dic['passto'] = False
+                    collion.haveBall = False
+                    self.player = None
+                    self.shoot = True
+                    self.rect.x -= self.dx
+                    self.dx *= -1
+                    dx = (collion.target_obj.rect.x-collion.rect.x) * 0.1
+                    dy = (collion.target_obj.react.y-collion.rect.y) * 0.1
+                    self.dy += dy
+                    self.dx += dx
+
+                if collion.action_dic['tackle']:
+                    if random.random() < 0.5:
+                        collion.action_dic['tackle'] = False
+                        collion.haveBall = True
+                        self.player = collion
+                        self.shoot = False
+                        self.rect.x = collion.rect.x + 20
+                        self.rect.y = collion.rect.y + 55
+
+        collion = pygame.sprite.spritecollideany(ball, goal_sprite)
+        if collion:
+            if collion.name == "goal1":
+                print("Goal1")
+                ball.__init__()
+            elif collion.name == "goal2":
+                print("Goal2")
+                ball.__init__()
+
+            player1Number = 1
+            field_object['playerA'+str(player1Number)].setPosition(40, WINDOW_HEIGHT / 2)
+            field_object['playerB'+str(player1Number)].setPosition(WINDOW_WIDTH - 65, WINDOW_HEIGHT / 2)
+
+            player1Number += 1
+
+            position = 150
+            for _ in range(2):
+                field_object['playerA'+str(player1Number)].setPosition(300, position)
+                field_object['playerB'+str(player1Number)].setPosition(1170, position)
+                position += 500
+                player1Number += 1
+
+            position = 110
+            for _ in range(3):
+                field_object['playerA'+str(player1Number)].setPosition(470, position)
+                field_object['playerB'+str(player1Number)].setPosition(1000, position)
+                position += 300
+                player1Number += 1
+
+            field_object['playerA'+str(player1Number)].setPosition(650, 400)
+            field_object['playerB'+str(player1Number)].setPosition(820, 400)
+
+            print( field_object )
 
 # main
 all_sprites = pygame.sprite.Group()
+goal_sprite = pygame.sprite.Group()
 ball_sprite = pygame.sprite.GroupSingle()
+
 ball = Ball()
 ball_sprite.add(ball)
 
@@ -234,11 +294,20 @@ field_object['playerB'+str(player1Number)] = botAttack2
 ball = Ball()
 field_object['ball'] = ball
 ball_sprite.add(ball)
-print( field_object )
 
 count = 0
 prolog.retractall('is_at(_,_,_)')
 prolog.retractall('has(_,_,_)')
+
+goal1 = Goal()
+goal1.name = 'goal1'
+goal_sprite.add(goal1)
+
+goal2 = Goal()
+goal2.setPosition( WINDOW_WIDTH - 35,WINDOW_HEIGHT / 2)
+goal2.name = 'goal2'
+goal_sprite.add(goal2)
+
 while True:
     # set framerate
     clock.tick(FPS)
@@ -286,11 +355,13 @@ while True:
 
     all_sprites.update()
     ball_sprite.update()
+    goal_sprite.update()
 
     game_window.blit(BACKGROUND, (0, 0))
 
     all_sprites.draw(game_window)
     ball_sprite.draw(game_window)
+    goal_sprite.draw(game_window)
 
     count += 1
 
