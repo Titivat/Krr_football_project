@@ -32,8 +32,9 @@ pygame.display.set_caption('First Game')
 
 
 class Player1(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, name):
         pygame.sprite.Sprite.__init__(self)
+        self.name = name
         self.image = pygame.Surface((25, 60))
         self.image.fill(COLOR_RED)
         self.rect = self.image.get_rect()
@@ -57,8 +58,10 @@ class Player1(pygame.sprite.Sprite):
             if self.target_obj == None:
                 pass
             else:
-                self.dy = (self.target_obj.rect.y-self.rect.y) * 0.04
-                self.dx = (self.target_obj.rect.x-self.rect.x) * 0.04
+                #self.dy = (self.target_obj.rect.y-self.rect.y) * 0.04
+                self.dy = min((self.target_obj.rect.y-self.rect.y), 10)
+                #self.dx = (self.target_obj.rect.x-self.rect.x) * 0.04
+                self.dx = min((self.target_obj.rect.x-self.rect.x), 10)
 
         # collion = pygame.sprite.spritecollideany(self, ball_sprite)
         # if collion and not ball.shoot:
@@ -104,8 +107,8 @@ class Player1(pygame.sprite.Sprite):
 
 
 class Player2(Player1):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name):
+        super().__init__(name)
         self.image.fill(COLOR_BLUE)
         self.goalPositionX = 32
         self.goalPositionY = 396
@@ -119,6 +122,7 @@ class Ball(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
         self.shoot = False
+        self.player = None
 
     def update(self):
         if self.shoot:
@@ -136,8 +140,9 @@ class Ball(pygame.sprite.Sprite):
 
         collion = pygame.sprite.spritecollideany(ball, all_sprites)
         if collion:
-            if(type(collion) == Player1):
+            if(type(collion) == Player1 or type(collion) == Player2):
                 collion.haveBall = True
+                self.player = collion
                 self.shoot = False
                 self.rect.x = collion.rect.x + 20
                 self.rect.y = collion.rect.y + 55
@@ -145,6 +150,7 @@ class Ball(pygame.sprite.Sprite):
                 if collion.action_dic['shoot']:
                     collion.action_dic['shoot'] = False
                     collion.haveBall = False
+                    self.player = None
                     self.shoot = True
                     self.rect.x -= self.dx
                     self.dx *= -1
@@ -162,13 +168,13 @@ ball_sprite.add(ball)
 
 field_object = {}
 player1Number = 1
-player1 = Player1()
+player1 = Player1('playerA'+str(player1Number))
 player1.setPosition(40, WINDOW_HEIGHT / 2)
 field_object['playerA'+str(player1Number)] = player1
 
 all_sprites.add(player1)
 
-player2 = Player2()
+player2 = Player2('playerB'+str(player1Number))
 player2.setPosition(WINDOW_WIDTH - 65, WINDOW_HEIGHT / 2)
 field_object['playerB'+str(player1Number)] = player2
 all_sprites.add(player2)
@@ -177,11 +183,11 @@ player1Number += 1
 
 position = 150
 for _ in range(2):
-    bot1 = Player1()
+    bot1 = Player1('playerA'+str(player1Number))
     bot1.setPosition(300, position)
     all_sprites.add(bot1)
 
-    bot2 = Player2()
+    bot2 = Player2('playerB'+str(player1Number))
     bot2.setPosition(1170, position)
     all_sprites.add(bot2)
 
@@ -192,11 +198,11 @@ for _ in range(2):
 
 position = 110
 for _ in range(3):
-    bot1 = Player1()
+    bot1 = Player1('playerA'+str(player1Number))
     bot1.setPosition(470, position)
     all_sprites.add(bot1)
 
-    bot2 = Player2()
+    bot2 = Player2('playerB'+str(player1Number))
     bot2.setPosition(1000, position)
     all_sprites.add(bot2)
 
@@ -205,15 +211,15 @@ for _ in range(3):
     field_object['playerB'+str(player1Number)] = bot2
     player1Number += 1
 
-botAttack1 = Player1()
+botAttack1 = Player1('playerA' + str(player1Number))
 botAttack1.setPosition(650, 400)
 all_sprites.add(botAttack1)
 field_object['playerA' + str(player1Number)] = botAttack1
 
-botAttack2 = Player2()
+botAttack2 = Player2('playerB'+str(player1Number))
 botAttack2.setPosition(820, 400)
 all_sprites.add(botAttack2)
-field_object['playerB'+str(player1Number)] = botAttack1
+field_object['playerB'+str(player1Number)] = botAttack2
 
 ball = Ball()
 field_object['ball'] = ball
@@ -236,8 +242,8 @@ while True:
 
     for k, v in field_object.items():
         prolog.assertz(f'is_at({k},{v.rect.x},{v.rect.y})')
-        if isinstance(v, Player1) and v.haveBall:
-            prolog.assertz(f'has({k},ball)')
+        if isinstance(v, Ball) and v.player:
+            prolog.assertz(f'has({v.player.name},ball)')
 
     for q in prolog.query('mi(A)'):
         for action in q['A']:

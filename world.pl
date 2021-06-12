@@ -1,4 +1,4 @@
-:- module(world, [player/1, team/2, goalkeeper/1, is_at/3, shooting_zone/5, in/6, distance/3, has/2, is_member/2, is_same_team/2, closest_objects/2, closest_allies/2, closest_opponents/2]).
+:- module(world, [player/1, team/2, goalkeeper/1, is_at/3, shooting_zone/5, in/6, distance/3, has/2, is_member/2, is_same_team/2, closest_objects/2, closest_allies/2, closest_opponents/2, closest_players_ball/1, closest_players_ball/3]).
 
 player(playerA1).
 player(playerA2).
@@ -72,14 +72,20 @@ closest_objects(X, SL) :-
 
 closest_allies(X, SL) :-
         is_at(X,_,_),
-        findall((Y,D), (is_at(Y,_,_), X \= Y, is_same_team(X,Y), distance(X,Y,D)), UL),
+        findall((Y,D), (is_at(Y,_,_), Y \= ball, X \= Y, is_same_team(X,Y), distance(X,Y,D)), UL),
         sort(2, @=<, UL, SL).
 
 closest_opponents(X, SL) :-
         is_at(X,_,_),
-        findall((Y,D), (is_at(Y,_,_), X \= Y, \+is_same_team(X,Y), distance(X,Y,D)), UL),
+        findall((Y,D), (is_at(Y,_,_), Y \= ball, X \= Y, \+is_same_team(X,Y), distance(X,Y,D)), UL),
         sort(2, @=<, UL, SL).
 
-closest_player_ball(P1, P2) :-
-        closest_objects(ball, [(P1,_)|_]),
-        closest_opponents(P1, [(P2,_)|_]).
+closest_players_ball([], _, _).
+closest_players_ball([H|T], P1, P2) :-
+        \+is_same_team(P1,H),
+        (P2,_) = H, !;
+        closest_players_ball(T, P1, P2).
+closest_players_ball(P) :-
+        closest_objects(ball, [(P,_)|_]);
+        closest_objects(ball, [(P1,_)|T]),
+        closest_players_ball(T, P1, P).
