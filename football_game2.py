@@ -47,6 +47,7 @@ class Player1(pygame.sprite.Sprite):
             'shoot': False,
             'forward': False,
             'backward': False,
+            "passto": False,
         }
         self.dx = 0
         self.dy = 0
@@ -67,42 +68,17 @@ class Player1(pygame.sprite.Sprite):
         
         if self.action_dic['forward']:
             self.action_dic['forward'] = False
-            if self.target_obj == None:
-                pass
+            if self.name in "playerB":
+                self.dx = 10
             else:
-                if self.name in "playerB":
-                    self.dx = 10
-                else:
-                    self.dx = -10
+                self.dx = -10
         
         if self.action_dic['backward']:
             self.action_dic['backward'] = False
-            if self.target_obj == None:
-                pass
+            if self.name in "playerB":
+                self.dx = -10
             else:
-                if self.name in "playerB":
-                    self.dx = -10
-                else:
-                    self.dx = 10
-
-        # collion = pygame.sprite.spritecollideany(self, ball_sprite)
-        # if collion and not ball.shoot:
-        #     if(type(collion) == Ball):
-        #         self.haveBall = True
-        #         ball.shoot = False
-        #         ball.rect.x = self.rect.x + 20
-        #         ball.rect.y = self.rect.y + 55
-
-        #         if self.action_dic['shoot']:
-        #             self.action_dic['shoot'] = False
-        #             self.haveBall = False
-        #             ball.shoot = True
-        #             ball.rect.x -= ball.dx
-        #             ball.dx *= -1
-        #             dx = (self.goalPositionX-self.rect.x) * 0.01
-        #             dy = (self.goalPositionY-self.rect.y) * 0.01
-        #             ball.dy += dy
-        #             ball.dx += dx
+                self.dx = 10
 
         self.rect.y += self.dy
         self.rect.x += self.dx
@@ -115,7 +91,8 @@ class Player1(pygame.sprite.Sprite):
         self.action_dic['shoot'] = True
 
     def passto(self, obj):
-        pass
+        self.action_dic['passto'] = True
+        self.target_obj = obj
 
     def forward(self):
         self.action_dic['forward'] = True
@@ -169,18 +146,29 @@ class Ball(pygame.sprite.Sprite):
                 self.rect.x = collion.rect.x + 20
                 self.rect.y = collion.rect.y + 55
 
-                if collion.action_dic['shoot']:
-                    collion.action_dic['shoot'] = False
-                    collion.haveBall = False
-                    self.player = None
-                    self.shoot = True
-                    self.rect.x -= self.dx
-                    self.dx *= -1
-                    dx = (collion.goalPositionX-collion.rect.x) * 0.01
-                    dy = (collion.goalPositionY-collion.rect.y) * 0.01
-                    self.dy += dy
-                    self.dx += dx
+            if collion.action_dic['shoot']:
+                collion.action_dic['shoot'] = False
+                collion.haveBall = False
+                self.player = None
+                self.shoot = True
+                self.rect.x -= self.dx
+                self.dx *= -1
+                dx = (collion.goalPositionX-collion.rect.x) * 0.1
+                dy = (collion.goalPositionY-collion.rect.y) * 0.1
+                self.dy += dy
+                self.dx += dx
 
+            if collion.action_dic['passto']:
+                collion.action_dic['passto'] = False
+                collion.haveBall = False
+                self.player = None
+                self.shoot = True
+                self.rect.x -= self.dx
+                self.dx *= -1
+                dx = (collion.target_obj.rect.x-collion.rect.x) * 0.1
+                dy = (collion.target_obj.react.y-collion.rect.y) * 0.1
+                self.dy += dy
+                self.dx += dx
 
 # main
 all_sprites = pygame.sprite.Group()
@@ -246,6 +234,7 @@ field_object['playerB'+str(player1Number)] = botAttack2
 ball = Ball()
 field_object['ball'] = ball
 ball_sprite.add(ball)
+print( field_object )
 
 count = 0
 prolog.retractall('is_at(_,_,_)')
