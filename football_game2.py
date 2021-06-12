@@ -70,14 +70,20 @@ class Player1(pygame.sprite.Sprite):
             if self.target_obj == None:
                 pass
             else:
-                self.dx = 10
+                if self.name in "playerB":
+                    self.dx = 10
+                else:
+                    self.dx = -10
         
         if self.action_dic['backward']:
             self.action_dic['backward'] = False
             if self.target_obj == None:
                 pass
             else:
-                self.dx = -10
+                if self.name in "playerB":
+                    self.dx = -10
+                else:
+                    self.dx = 10
 
         # collion = pygame.sprite.spritecollideany(self, ball_sprite)
         # if collion and not ball.shoot:
