@@ -4,6 +4,11 @@ import random
 import sys
 import math
 
+from pyswip import Prolog, Atom, Functor
+
+prolog = Prolog()
+prolog.consult('mi.pl')
+
 pygame.init()
 
 # setting
@@ -34,6 +39,7 @@ class Player1(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.goalPositionX = 1467
         self.goalPositionY = 386
+        self.haveBall = False
         self.target_obj = None
         self.action_dic = {
             'follow': False,
@@ -76,11 +82,21 @@ class Player1(pygame.sprite.Sprite):
         self.rect.y += self.dy
         self.rect.x += self.dx
 
-    def follow(self):
+    def follow(self, obj):
         self.action_dic['follow'] = True
+        self.target_obj = obj
 
     def shoot(self):
         self.action_dic['shoot'] = True
+    
+    def passto(self, obj):
+        pass
+    
+    def forward(self):
+        pass
+
+    def backward(self):
+        pass
 
     def setPosition(self, left, center):
         self.rect.left = left
@@ -198,6 +214,33 @@ while True:
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
             print(pos)
+
+    for k,v in field_object.items():
+        prolog.assertz(f'is_at({k},{v.rect.x},{v.rect.y})')
+        if isinstance(v, Player1) and v.haveBall:
+            prolog.assertz(f'has({k},ball)')
+    
+    for q in prolog.query('mi(A)'):
+        for action in q['A']:
+            functor = str(action.name)
+            if action.arity == 1:
+                argv = str(action.args[0])
+                if functor == "forward":
+                    field_object[argv].forward()
+                elif functor == "backward":
+                    field_object[argv].backward()
+                elif functor == "shoot":
+                    field_object[argv].shoot()
+            elif action.arity == 2:
+                argv1 = str(action.args[0])
+                argv2 = str(action.args[1])
+                if functor == "follow":
+                    field_object[argv1].follow(field_object[argv2])
+                    #field_object[argv1].isFollow = True
+                #elif functor == "tackle":
+                #    field_object[argv1].tackle(field_object[argv2])
+                elif functor == "pass":
+                    field_object[argv1].passto(field_object[argv2])
 
     all_sprites.update()
     ball_sprite.update()
