@@ -44,7 +44,9 @@ class Player1(pygame.sprite.Sprite):
         self.target_obj = None
         self.action_dic = {
             'follow': False,
-            'shoot': False
+            'shoot': False,
+            'forward': False,
+            'backward': False,
         }
         self.dx = 0
         self.dy = 0
@@ -62,6 +64,20 @@ class Player1(pygame.sprite.Sprite):
                 self.dy = min((self.target_obj.rect.y-self.rect.y), 10)
                 #self.dx = (self.target_obj.rect.x-self.rect.x) * 0.04
                 self.dx = min((self.target_obj.rect.x-self.rect.x), 10)
+        
+        if self.action_dic['forward']:
+            self.action_dic['forward'] = False
+            if self.target_obj == None:
+                pass
+            else:
+                self.dx = 10
+        
+        if self.action_dic['backward']:
+            self.action_dic['backward'] = False
+            if self.target_obj == None:
+                pass
+            else:
+                self.dx = -10
 
         # collion = pygame.sprite.spritecollideany(self, ball_sprite)
         # if collion and not ball.shoot:
@@ -96,10 +112,10 @@ class Player1(pygame.sprite.Sprite):
         pass
 
     def forward(self):
-        pass
+        self.action_dic['forward'] = True
 
     def backward(self):
-        pass
+        self.action_dic['backward'] = True
 
     def setPosition(self, left, center):
         self.rect.left = left
