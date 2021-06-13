@@ -114,18 +114,14 @@ class Player1(pygame.sprite.Sprite):
             self.action_dic['forward'] = False
             if self.name[6] == "B":
                 self.dx = 5
-                print("hello1")
             else:
-                print("hello2")
                 self.dx = -5
         
         if self.action_dic['backward']:
             self.action_dic['backward'] = False
             if self.name[6] == "B":
                 self.dx = 5
-                print("hello3")
             else:
-                print("hello4")
                 self.dx = -5
 
         self.rect.y += self.dy
