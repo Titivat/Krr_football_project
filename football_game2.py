@@ -144,8 +144,9 @@ class Player1(pygame.sprite.Sprite):
     def backward(self):
         self.action_dic['backward'] = True
 
-    def tackle(self):
+    def tackle(self, obj):
         self.action_dic['tackle'] = True
+        self.target_obj = obj
 
     def setPosition(self, left, center):
         self.rect.left = left
@@ -219,7 +220,7 @@ class Ball(pygame.sprite.Sprite):
                     self.rect.x -= self.dx
                     self.dx *= -1
                     dx = (collion.target_obj.rect.x-collion.rect.x) * 0.1
-                    dy = (collion.target_obj.react.y-collion.rect.y) * 0.1
+                    dy = (collion.target_obj.rect.y-collion.rect.y) * 0.1
                     self.dy += dy
                     self.dx += dx
 
@@ -384,9 +385,8 @@ while True:
                 argv2 = str(action.args[1])
                 if functor == "follow":
                     field_object[argv1].follow(field_object[argv2])
-                    #field_object[argv1].isFollow = True
-                # elif functor == "tackle":
-                #    field_object[argv1].tackle(field_object[argv2])
+                elif functor == "tackle":
+                    field_object[argv1].tackle(field_object[argv2])
                 elif functor == "pass":
                     field_object[argv1].passto(field_object[argv2])
 
