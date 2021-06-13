@@ -79,7 +79,8 @@ class Player1(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.name = name
         self.image = pygame.Surface((25, 60))
-        self.image.fill(COLOR_RED)
+        playerImage = pygame.image.load("./player1-removebg-preview .png")
+        self.image = pygame.transform.scale(playerImage, (25, 60))
         self.rect = self.image.get_rect()
         self.goalPositionX = 1467
         self.goalPositionY = 386
@@ -155,7 +156,8 @@ class Player1(pygame.sprite.Sprite):
 class Player2(Player1):
     def __init__(self, name):
         super().__init__(name)
-        self.image.fill(COLOR_BLUE)
+        player2Image = pygame.image.load("./player2-removebg-preview.png")
+        self.image = pygame.transform.scale(player2Image, (25, 60))
         self.goalPositionX = 32
         self.goalPositionY = 396
 
@@ -165,7 +167,7 @@ class Ball(pygame.sprite.Sprite):
         self.image = pygame.Surface((15, 15))
         self.rect = self.image.get_rect()
         ballImage = pygame.image.load("./SoccerBall.png")
-        self.image = pygame.transform.scale(ballImage, (25, 25))
+        self.image = pygame.transform.scale(ballImage, (15, 25))
         self.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
         self.shoot = False
         self.player = None
