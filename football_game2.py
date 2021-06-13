@@ -2,7 +2,8 @@ from typing import Tuple
 import pygame
 import random
 import sys
-import math, random
+import math
+from random import randrange
 
 from pyswip import Prolog, Atom, Functor
 
@@ -82,8 +83,7 @@ class Player1(pygame.sprite.Sprite):
         playerImage = pygame.image.load("./player1-removebg-preview .png")
         self.image = pygame.transform.scale(playerImage, (25, 60))
         self.rect = self.image.get_rect()
-        self.goalPositionX = 1467
-        self.goalPositionY = 386
+        self.goalPosition = [(1467, 386),(1469, 314)]
         self.haveBall = False
         self.target_obj = None
         self.action_dic = {
@@ -158,8 +158,7 @@ class Player2(Player1):
         super().__init__(name)
         player2Image = pygame.image.load("./player2-removebg-preview.png")
         self.image = pygame.transform.scale(player2Image, (25, 60))
-        self.goalPositionX = 32
-        self.goalPositionY = 396
+        self.goalPosition = [(32, 396), (29, 323)]
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
@@ -210,8 +209,9 @@ class Ball(pygame.sprite.Sprite):
                     self.shoot = True
                     self.rect.x -= self.dx
                     self.dx *= -1
-                    dx = (collion.goalPositionX-collion.rect.x) * 0.1
-                    dy = (collion.goalPositionY-collion.rect.y) * 0.1
+                    randomKick = randrange( len(collion.goalPosition) )
+                    dx = (collion.goalPosition[randomKick][0] -collion.rect.x) * 0.1
+                    dy = (collion.goalPosition[randomKick][1] -collion.rect.y) * 0.1
                     self.dy += dy
                     self.dx += dx
 
