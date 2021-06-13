@@ -14,7 +14,7 @@ pygame.init()
 # setting
 WINDOW_WIDTH = 1500
 WINDOW_HEIGHT = 800
-FPS = 60
+FPS = 30
 clock = pygame.time.Clock()
 
 COLOR_WHITE = (255, 255, 255)
@@ -163,8 +163,9 @@ class Ball(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((15, 15))
-        self.image.fill(COLOR_WHITE)
         self.rect = self.image.get_rect()
+        ballImage = pygame.image.load("./SoccerBall.png")
+        self.image = pygame.transform.scale(ballImage, (25, 25))
         self.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
         self.shoot = False
         self.player = None
