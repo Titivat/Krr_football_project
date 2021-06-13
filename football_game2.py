@@ -324,8 +324,6 @@ field_object['ball'] = ball
 ball_sprite.add(ball)
 
 count = 0
-prolog.retractall('is_at(_,_,_)')
-prolog.retractall('has(_,_,_)')
 
 goal1 = Goal()
 goal1.name = 'goal1'
@@ -354,7 +352,7 @@ while True:
             print(pos)
 
     prolog.retractall('is_at(_,_,_)')
-    prolog.retractall('has(_,_,_)')
+    prolog.retractall('has(_,_)')
     
     for k, v in field_object.items():
         prolog.assertz(f'is_at({k},{v.rect.x},{v.rect.y})')
