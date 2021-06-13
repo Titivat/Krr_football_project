@@ -1,4 +1,4 @@
-:- module(world, [player/1, team/2, goalkeeper/1, is_at/3, shooting_zone/5, in/6, distance/3, has/2, is_member/2, is_same_team/2, closest_objects/2, closest_allies/2, closest_opponents/2, closest_players_ball/1, closest_players_ball/3]).
+:- module(world, [player/1, team/2, goalkeeper/1, back/1, mid/1, front/1, is_at/3, shooting_zone/5, in/6, distance/3, has/2, is_member/2, is_same_team/2, closest_objects/2, closest_allies/2, closest_opponents/2, closest_players_ball/1, closest_players_ball/3]).
 
 player(playerA1).
 player(playerA2).
@@ -18,6 +18,21 @@ player(playerB7).
 
 goalkeeper(playerA1).
 goalkeeper(playerB1).
+
+back(playerA2).
+back(playerA3).
+back(playerB2).
+back(playerB3).
+
+mid(playerA4).
+mid(playerA5).
+mid(playerA6).
+mid(playerB4).
+mid(playerB5).
+mid(playerB6).
+
+front(playerA7).
+front(playerB7).
 
 team(a, [playerA1, playerA2, playerA3, playerA4, playerA5, playerA6, playerA7]).
 team(b, [playerB1, playerB2, playerB3, playerB4, playerB5, playerB6, playerB7]).
