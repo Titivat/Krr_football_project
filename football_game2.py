@@ -67,13 +67,23 @@ class Goal(pygame.sprite.Sprite):
         self.image = pygame.Surface((10, 210))
         self.image.fill(COLOR_BLACK)
         self.rect = self.image.get_rect()
-        self.rect.left = 25
+        self.rect.left = 30
         self.rect.centery = WINDOW_HEIGHT / 2
         self.name = ""
 
     def setPosition(self, left, center):
         self.rect.left = left
         self.rect.centery = center
+
+class OutLine(Goal):
+    def __init__(self, name):
+        super().__init__()
+        self.image = pygame.Surface((10, WINDOW_HEIGHT))
+        self.image.fill(COLOR_WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.right = WINDOW_WIDTH - 23
+        self.rect.centery = WINDOW_HEIGHT / 2
+        self.name = name
     
 class Player1(pygame.sprite.Sprite):
     def __init__(self, name):
@@ -268,10 +278,31 @@ class Ball(pygame.sprite.Sprite):
             field_object['playerA'+str(player1Number)].setPosition(650, 400)
             field_object['playerB'+str(player1Number)].setPosition(820, 400)
 
+        collion = pygame.sprite.spritecollideany(ball, out_line_sprite)
+        if collion:
+            if( collion.name == "outLine2"):
+                self.dx *= -1
+                self.dx += random.choice([1, 2])
+                self.dx += 1
+                self.rect.x -= self.dx
+            elif( collion.name == "outLine1"):
+                self.dx *= -1
+                self.dx += random.choice([1, 2])
+                self.dx -= 1
+                self.rect.x -= self.dx
+
 # main
 all_sprites = pygame.sprite.Group()
 goal_sprite = pygame.sprite.Group()
+out_line_sprite = pygame.sprite.Group()
 ball_sprite = pygame.sprite.GroupSingle()
+
+outLine1 = OutLine('outLine1')
+out_line_sprite.add( outLine1 )
+outLine2 = OutLine('outLine2')
+outLine2.setPosition( 21, WINDOW_HEIGHT / 2)
+out_line_sprite.add( outLine2 )
+
 
 ball = Ball()
 ball_sprite.add(ball)
@@ -339,7 +370,7 @@ count = 0
 
 goal1 = Goal()
 goal1.name = 'goal1'
-goal1.setPosition(WINDOW_WIDTH - 35,WINDOW_HEIGHT / 2)
+goal1.setPosition(WINDOW_WIDTH - 40,WINDOW_HEIGHT / 2)
 goal_sprite.add(goal1)
 
 goal2 = Goal()
@@ -396,6 +427,7 @@ while True:
     all_sprites.update()
     ball_sprite.update()
     goal_sprite.update()
+    out_line_sprite.update()
     score.update()
 
     game_window.blit(BACKGROUND, (0, 0))
@@ -404,6 +436,7 @@ while True:
     all_sprites.draw(game_window)
     ball_sprite.draw(game_window)
     goal_sprite.draw(game_window)
+    out_line_sprite.draw(game_window)
 
     count += 1
 
