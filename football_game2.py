@@ -113,9 +113,9 @@ class Player1(pygame.sprite.Sprite):
         if self.action_dic['forward']:
             self.action_dic['forward'] = False
             if self.name[6] == "B":
-                self.dx = 5
-            else:
                 self.dx = -5
+            else:
+                self.dx = 5
         
         if self.action_dic['backward']:
             self.action_dic['backward'] = False
@@ -196,8 +196,8 @@ class Ball(pygame.sprite.Sprite):
                     collion.haveBall = True
                     self.player = collion
                     self.shoot = False
-                    self.rect.x = collion.rect.x 
-                    self.rect.y = collion.rect.y 
+                    self.rect.x = collion.rect.x - 10
+                    self.rect.y = collion.rect.y + 55
                 
                 if collion.action_dic['shoot']:
                     collion.action_dic['shoot'] = False

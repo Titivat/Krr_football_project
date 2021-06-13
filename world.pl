@@ -1,4 +1,4 @@
-:- module(world, [player/1, team/2, goalkeeper/1, back/1, mid/1, front/1, is_at/3, shooting_zone/5, in/6, distance/3, has/2, is_member/2, is_same_team/2, closest_objects/2, closest_allies/2, closest_opponents/2, closest_players_ball/1, closest_players_ball/3]).
+:- module(world, [player/1, team/2, goalkeeper/1, back/1, mid/1, front/1, is_at/3, field_zone/4, shooting_zone/5, midfield_zone/4, in/6, in_field/1, in_oponent_shooting_zone/1, in_midfield_zone/1, distance/3, has/2, is_member/2, is_same_team/2, closest_objects/2, closest_allies/2, closest_opponents/2, closest_players_ball/1, closest_players_ball/3]).
 
 player(playerA1).
 player(playerA2).
@@ -56,9 +56,13 @@ team(b, [playerB1, playerB2, playerB3, playerB4, playerB5, playerB6, playerB7]).
 %is_at(playerB6, 500, 200).
 %is_at(playerB7, 500, 400).
 
+field_zone(20, 20, 1480, 770).
+
 % shooting region
-shooting_zone(a, 30, 165, 235, 630).
-shooting_zone(b, 1260, 165, 1465, 630).
+shooting_zone(a, 30, 0, 235, 800).
+shooting_zone(b, 1260, 0, 1465, 800).
+
+midfield_zone(600, 30, 970, 760).
 
 % inside region
 in(X1, Y1, X2, Y2, X3, Y3) :-
@@ -66,6 +70,25 @@ in(X1, Y1, X2, Y2, X3, Y3) :-
         X1 < X3,
         Y1 > Y2,
         Y1 < Y3.
+
+in_field(P) :-
+        is_at(P, X1, Y1),
+        field_zone(X2, Y2, X3, Y3),
+        in(X1, Y1, X2, Y2, X3, Y3).
+
+% inside oponent shooting zone
+in_oponent_shooting_zone(P) :-
+        is_at(P, X1, Y1),
+        team(T1, L),
+        is_member(P, L),
+        shooting_zone(T2, X2, Y2, X3, Y3),
+        T1 \= T2,
+        in(X1, Y1, X2, Y2, X3, Y3).
+
+in_midfield_zone(P) :-
+        is_at(P, X1, Y1),
+        midfield_zone(X2, Y2, X3, Y3),
+        in(X1, Y1, X2, Y2, X3, Y3).
 
 % calculate distance between two points
 distance(O1, O2, D) :-
