@@ -30,6 +30,36 @@ BACKGROUND = pygame.transform.scale(BACKGROUND, (WINDOW_WIDTH, WINDOW_HEIGHT))
 game_window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('First Game')
 
+class Score():
+    def __init__(self):
+        self.score1 = 0
+        self.score2 = 0
+        self.score_font = pygame.font.SysFont(None, 100)
+        self.win_font = pygame.font.SysFont(None, 100)
+        self.player1_win = self.win_font.render(
+            'Player 1 win', True, COLOR_WHITE, COLOR_BLACK)
+        self.player2_win = self.win_font.render(
+            'Player 2 win', True, COLOR_WHITE, COLOR_BLACK)
+
+    def update(self):
+        self.player1_score = self.score_font.render(
+            str(self.score1), True, COLOR_WHITE, COLOR_BLACK)
+        self.player2_score = self.score_font.render(
+            str(self.score2), True, COLOR_WHITE, COLOR_BLACK)
+
+    def draw(self):
+        game_window.blit(self.player1_score, (WINDOW_WIDTH / 4, 10))
+        game_window.blit(self.player2_score, (WINDOW_WIDTH * 3 / 4, 10))
+
+        if self.score1 == 5:
+            game_window.blit(self.player1_win, (55, WINDOW_HEIGHT / 4))
+            ball.dx = 0
+            ball.dy = 0
+        if self.score2 == 5:
+            game_window.blit(self.player2_win, (55, WINDOW_HEIGHT / 4))
+            ball.dx = 0
+            ball.dy = 0
+
 class Goal(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -197,10 +227,10 @@ class Ball(pygame.sprite.Sprite):
         collion = pygame.sprite.spritecollideany(ball, goal_sprite)
         if collion:
             if collion.name == "goal1":
-                print("Goal1")
+                score.score1 += 1
                 ball.__init__()
             elif collion.name == "goal2":
-                print("Goal2")
+                score.score2 += 1
                 ball.__init__()
 
             player1Number = 1
@@ -225,8 +255,6 @@ class Ball(pygame.sprite.Sprite):
 
             field_object['playerA'+str(player1Number)].setPosition(650, 400)
             field_object['playerB'+str(player1Number)].setPosition(820, 400)
-
-            print( field_object )
 
 # main
 all_sprites = pygame.sprite.Group()
@@ -301,12 +329,15 @@ prolog.retractall('has(_,_,_)')
 
 goal1 = Goal()
 goal1.name = 'goal1'
+goal1.setPosition(WINDOW_WIDTH - 35,WINDOW_HEIGHT / 2)
 goal_sprite.add(goal1)
 
 goal2 = Goal()
-goal2.setPosition( WINDOW_WIDTH - 35,WINDOW_HEIGHT / 2)
 goal2.name = 'goal2'
 goal_sprite.add(goal2)
+
+score = Score()
+score.__init__()
 
 while True:
     # set framerate
@@ -356,9 +387,11 @@ while True:
     all_sprites.update()
     ball_sprite.update()
     goal_sprite.update()
+    score.update()
 
     game_window.blit(BACKGROUND, (0, 0))
-
+    
+    score.draw()
     all_sprites.draw(game_window)
     ball_sprite.draw(game_window)
     goal_sprite.draw(game_window)
