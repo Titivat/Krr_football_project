@@ -167,7 +167,7 @@ class Ball(pygame.sprite.Sprite):
         self.image = pygame.Surface((15, 15))
         self.rect = self.image.get_rect()
         ballImage = pygame.image.load("./SoccerBall.png")
-        self.image = pygame.transform.scale(ballImage, (25, 25))
+        self.image = pygame.transform.scale(ballImage, (15, 15))
         self.rect.center = (WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2)
         self.shoot = False
         self.player = None
