@@ -185,12 +185,20 @@ class Ball(pygame.sprite.Sprite):
         collion = pygame.sprite.spritecollideany(ball, all_sprites)
         if collion:
             if(type(collion) == Player1 or type(collion) == Player2):
-                collion.haveBall = True
-                self.player = collion
-                self.shoot = False
-                self.rect.x = collion.rect.x + 20
-                self.rect.y = collion.rect.y + 55
+                if(type(collion) == Player1):
+                    collion.haveBall = True
+                    self.player = collion
+                    self.shoot = False
+                    self.rect.x = collion.rect.x + 20
+                    self.rect.y = collion.rect.y + 55
 
+                if(type(collion) == Player2):
+                    collion.haveBall = True
+                    self.player = collion
+                    self.shoot = False
+                    self.rect.x = collion.rect.x 
+                    self.rect.y = collion.rect.y 
+                
                 if collion.action_dic['shoot']:
                     collion.action_dic['shoot'] = False
                     collion.haveBall = False
